@@ -24,10 +24,21 @@ func InspectInfo(path string) (Info, error) {
 	mu.Lock()
 	defer mu.Unlock()
 
-	cmd := exec.Command(execPath, "-user_agent", constant.CommonDlUserAgent, "-threads", "1", "-i", path)
+	// 1. 创建一个带有超时时间的 context（例如 10 秒）
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel() // 务必调用 cancel，释放资源
 
-	outputBytes, _ := cmd.CombinedOutput()
-	if bytes.Contains(outputBytes, []byte(OpenError)) {
+	// 2. 使用 CommandContext 代替 Command
+	cmd := exec.CommandContext(ctx, execPath, "-user_agent", constant.CommonDlUserAgent, "-threads", "1", "-i", path)
+
+	outputBytes, err := cmd.CombinedOutput()
+	
+	// 3. 检查是否因为超时退出
+	if ctx.Err() == context.DeadlineExceeded {
+		return Info{}, errors.New("ffmpeg 解析超时")
+	}
+    
+	if err != nil && bytes.Contains(outputBytes, []byte(OpenError)) {
 		return Info{}, errors.New(string(outputBytes[bytes.Index(outputBytes, []byte(OpenError)):]))
 	}
 
