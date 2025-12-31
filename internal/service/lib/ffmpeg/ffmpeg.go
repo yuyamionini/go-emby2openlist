@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"os/exec"
 	"sync"
+	"context"
+	"time"
 
 	"github.com/AmbitiousJun/go-emby2openlist/v2/internal/constant"
 )
