@@ -3,6 +3,7 @@ name: Build and Upload Release Binaries
 on:
   release:
     types: [published]
+  workflow_dispatch:
 
 permissions:
   contents: write  # 授予 GITHUB_TOKEN 写入发布资源的权限
