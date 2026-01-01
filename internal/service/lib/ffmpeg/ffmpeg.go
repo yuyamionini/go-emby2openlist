@@ -27,7 +27,7 @@ func InspectInfo(path string) (Info, error) {
 	defer mu.Unlock()
 
 	// 1. 创建一个带有超时时间的 context（例如 10 秒）
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel() // 务必调用 cancel，释放资源
 
 	// 2. 使用 CommandContext 代替 Command
